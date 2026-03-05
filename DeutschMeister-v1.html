@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeutschMeister v1</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      font-family: Georgia, serif;
+      color: #f0e6d3;
+    }
+    button { cursor: pointer; font-family: Georgia, serif; }
+    button:active { opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const quizData = [
+      {
+        category: "Artikel", emoji: "🔵", categoryHU: "Névelők: der / die / das",
+        questions: [
+          { q: "___ Hund bellt laut.", hint: "Hund = kutya → hímnem", opts: ["der","die","das","ein"], c: 0, exp: "🇭🇺 'Hund' (kutya) hímnemű → határozott névelője: der.", rule: "Hímnem → der" },
+          { q: "___ Katze schläft.", hint: "Katze = macska → nőnem", opts: ["der","die","das","eine"], c: 1, exp: "🇭🇺 'Katze' (macska) nőnemű → die Katze. Sok -e végű főnév nőnemű!", rule: "Nőnem → die" },
+          { q: "___ Auto ist neu.", hint: "Auto = autó → semlegesnem", opts: ["der","die","das","ein"], c: 2, exp: "🇭🇺 'Auto' semleges nemű → das Auto.", rule: "Semlegesnem → das" },
+          { q: "Ich kaufe ___ Buch. (határozatlan)", hint: "határozatlan névelő semlegesnemben", opts: ["eine","ein","einen","einem"], c: 1, exp: "🇭🇺 Határozatlan névelő: ein (hímnem/semlegesnem), eine (nőnem). Semlegesnem → ein Buch.", rule: "Határozatlan: ein (das/der)" },
+          { q: "Das ist ___ Frau. (határozatlan)", hint: "Frau = nőnem, határozatlan névelő", opts: ["ein","einen","einer","eine"], c: 3, exp: "🇭🇺 Nőnemű főnév előtt határozatlan névelő: eine. Das ist eine Frau.", rule: "Határozatlan nőnem: eine" },
+          { q: "___ Tisch ist braun.", hint: "Tisch = asztal → hímnem", opts: ["Das","Die","Der","Ein"], c: 2, exp: "🇭🇺 'Tisch' (asztal) hímnemű. Alanyesetben: der Tisch.", rule: "Tisch = hímnem → der" },
+          { q: "___ Wasser ist kalt.", hint: "Wasser = víz → semlegesnem", opts: ["Der","Die","Das","Eine"], c: 2, exp: "🇭🇺 'Wasser' (víz) semleges nemű → das Wasser.", rule: "Wasser = semlegesnem → das" },
+          { q: "___ Schule beginnt um 8 Uhr.", hint: "Schule = iskola → nőnem (-e végű!)", opts: ["Der","Die","Das","Ein"], c: 1, exp: "🇭🇺 'Schule' nőnemű. Sok -e végű főnév nőnemű! die Schule, die Küche, die Lampe...", rule: "-e végű főnevek → die" },
+          { q: "Er trinkt ___ Kaffee. (határozatlan)", hint: "Kaffee = hímnem, határozatlan tárgyeset", opts: ["eine","ein","einen","einem"], c: 2, exp: "🇭🇺 Tárgyesetben a hímnemű határozatlan névelő: ein → EINEN.", rule: "Akkusativ hímnem: ein → einen" },
+          { q: "___ Zimmer ist groß.", hint: "Zimmer = szoba → semlegesnem", opts: ["Der","Die","Das","Ein"], c: 2, exp: "🇭🇺 'Zimmer' (szoba) semleges nemű → das Zimmer.", rule: "Zimmer = semlegesnem → das" },
+          { q: "Ich sehe ___ Sonne.", hint: "Sonne = nőnem, tárgyeset", opts: ["der","die","das","den"], c: 1, exp: "🇭🇺 'Sonne' nőnemű. Tárgyesetben a nőnemű névelő NEM változik: die marad.", rule: "Akkusativ nőnem: die → die (nem változik!)" },
+          { q: "___ Kind weint.", hint: "Kind = gyerek → semlegesnem", opts: ["Der","Die","Das","Ein"], c: 2, exp: "🇭🇺 'Kind' semleges nemű → das Kind. das Baby, das Mädchen is semleges!", rule: "Kind = semlegesnem → das" },
+        ]
+      },
+      {
+        category: "Sein & Haben", emoji: "🟡", categoryHU: "Létige (sein) és bírás (haben) ragozása",
+        questions: [
+          { q: "Ich ___ Student.", hint: "ich + sein", opts: ["habe","bin","ist","bist"], c: 1, exp: "🇭🇺 sein (lenni): ich BIN, du bist, er/sie/es ist, wir sind, ihr seid, sie/Sie sind.", rule: "ich + sein → bin" },
+          { q: "Du ___ sehr klug!", hint: "du + sein", opts: ["hast","bist","ist","seid"], c: 1, exp: "🇭🇺 du BIST = te vagy.", rule: "du + sein → bist" },
+          { q: "Er ___ einen Bruder.", hint: "er + haben, birtok", opts: ["ist","bin","hat","hast"], c: 2, exp: "🇭🇺 haben (bírni): ich habe, du hast, er/sie/es HAT.", rule: "er/sie/es + haben → hat" },
+          { q: "Wir ___ in Berlin.", hint: "wir + sein (helyzet/állapot)", opts: ["haben","sind","seid","ist"], c: 1, exp: "🇭🇺 Helyzet, állapot → 'sein'. wir SIND = mi vagyunk.", rule: "wir + sein → sind" },
+          { q: "Ihr ___ Hunger.", hint: "Fizikai érzés → haben! ihr személy", opts: ["seid","sind","habt","hat"], c: 2, exp: "🇭🇺 Fizikai érzések (Hunger, Durst, Angst) HABEN-nel állnak! ihr HABT Hunger.", rule: "Fizikai érzések: haben! ihr → habt" },
+          { q: "Sie (ők) ___ müde.", hint: "sie (ők) + sein, állapot", opts: ["haben","sind","hat","ist"], c: 1, exp: "🇭🇺 Állapot → sein. sie SIND = ők vannak.", rule: "sie (ők) + sein → sind" },
+          { q: "Das Kind ___ krank.", hint: "das Kind → 3. személy egyes → sein", opts: ["haben","hast","ist","sind"], c: 2, exp: "🇭🇺 Állapot (krank) → sein. 3. személy egyes → ist.", rule: "er/sie/es + sein → ist" },
+          { q: "Ich ___ Durst.", hint: "Durst = szomjúság → fizikai érzés!", opts: ["bin","bist","habe","hat"], c: 2, exp: "🇭🇺 Fizikai érzések → haben: ich HABE Hunger/Durst/Angst.", rule: "Fizikai érzés → haben: ich habe Durst" },
+          { q: "Wir ___ ein großes Haus.", hint: "wir + haben, birtok", opts: ["sind","seid","haben","habt"], c: 2, exp: "🇭🇺 Birtok → haben. wir HABEN = nekünk van.", rule: "wir + haben → haben" },
+          { q: "Sie (Ön) ___ Recht.", hint: "Sie (formális) + haben", opts: ["sind","hat","haben","bist"], c: 2, exp: "🇭🇺 'Sie' (Ön) = Sie HABEN, mint sie (ők).", rule: "Sie (Ön) + haben → haben" },
+          { q: "Er ___ kein Auto.", hint: "birtok tagadása → haben", opts: ["ist","bin","hat","sind"], c: 2, exp: "🇭🇺 Birtok → haben. er HAT kein Auto = nincs autója.", rule: "er + haben → hat" },
+        ]
+      },
+      {
+        category: "Nominativ & Akkusativ", emoji: "🟠", categoryHU: "Alanyeset és Tárgyeset",
+        questions: [
+          { q: "___ Mann liest die Zeitung. (Alanyeset)", hint: "Az alany alanyesetben áll → der", opts: ["Den","Die","Der","Das"], c: 2, exp: "🇭🇺 Alanyeset (Nominativ) = az ige alanya. Hímnem: DER Mann.", rule: "Nominativ hímnem: der" },
+          { q: "Ich sehe ___ Mann. (Tárgyeset)", hint: "sehen → tárgyeset; hímnemben der → den!", opts: ["der","die","den","dem"], c: 2, exp: "🇭🇺 Tárgyesetben (Akkusativ) hímnem: der → DEN. Ez az EGYETLEN változás!", rule: "Akkusativ hímnem: der → den" },
+          { q: "Sie kauft ___ Tasche. (Tárgyeset, nőnem)", hint: "Tasche = nőnem; tárgyesetben die marad!", opts: ["der","den","die","das"], c: 2, exp: "🇭🇺 Nőnemű tárgyesetben: die → die. Csak a hímnem változik!", rule: "Akkusativ nőnem: die → die (nem változik!)" },
+          { q: "Er trinkt ___ Wasser. (Tárgyeset, semlegesnem)", hint: "Wasser = semlegesnem; tárgyesetben das marad!", opts: ["der","den","die","das"], c: 3, exp: "🇭🇺 Semleges nemű tárgyesetben: das → das. Csak der → den változik!", rule: "Akkusativ semlegesnem: das → das" },
+          { q: "Ich habe ___ Hund. (határozatlan, hímnem)", hint: "ein → einen hímnem tárgyesetben", opts: ["ein","eine","einen","einem"], c: 2, exp: "🇭🇺 Határozatlan hímnem tárgyesetben: ein → EINEN.", rule: "Akkusativ határozatlan hímnem: ein → einen" },
+          { q: "Sie hat ___ Katze. (határozatlan, nőnem)", hint: "eine névelő nőnem tárgyesetben marad!", opts: ["ein","einen","einem","eine"], c: 3, exp: "🇭🇺 Nőnemű határozatlan tárgyesetben: eine → eine (nem változik).", rule: "Akkusativ határozatlan nőnem: eine → eine" },
+          { q: "Das ist ___ Problem. (határozatlan, semlegesnem)", hint: "semlegesnem, határozatlan névelő", opts: ["ein","eine","einen","einem"], c: 0, exp: "🇭🇺 Semleges nemű határozatlan alanyesetben: ein. Das ist ein Problem.", rule: "Nominativ határozatlan semlegesnem: ein" },
+          { q: "Ich besuche ___ Freund. (tárgyeset, hímnem)", hint: "besuchen → tárgyeset; hímnem der → den", opts: ["der","die","das","den"], c: 3, exp: "🇭🇺 'besuchen' tárgyesetbe helyezi a tárgyát. Hímnem tárgyesetben: den.", rule: "besuchen + Akkusativ: den Freund" },
+          { q: "___ Film war gut. (alanyeset, hímnem)", hint: "Alanyeset hímnem", opts: ["Den","Die","Der","Das"], c: 2, exp: "🇭🇺 'Film' hímnemű. Alanyesetben: DER Film.", rule: "Nominativ hímnem: der Film" },
+          { q: "Er kauft ___ Auto. (határozatlan, semlegesnem, tárgyeset)", hint: "Auto = semlegesnem; ein marad!", opts: ["einen","eine","ein","einem"], c: 2, exp: "🇭🇺 Semlegesnem határozatlan tárgyesetben: ein → ein (nem változik).", rule: "Akkusativ határozatlan semlegesnem: ein → ein" },
+          { q: "Wir essen ___ Kuchen. (határozott, hímnem, tárgyeset)", hint: "Kuchen = hímnem, essen → tárgyeset", opts: ["der","die","den","das"], c: 2, exp: "🇭🇺 Kuchen hímnemű tárgyesetben: den Kuchen.", rule: "Akkusativ hímnem határozott: den" },
+        ]
+      },
+      {
+        category: "Dativ & Akkusativ", emoji: "🔶", categoryHU: "Részeshatározó (Dativ) vs. Tárgyeset (Akkusativ)",
+        questions: [
+          { q: "Ich gebe ___ Frau ein Buch. (Dativ, nőnem)", hint: "geben → kinek? (Dativ); nőnem Dativban: der!", opts: ["die","der","das","den"], c: 1, exp: "🇭🇺 Dativban ('kinek?'): der→dem, die→DER, das→dem. Nőnem Dativban: die → DER!", rule: "Dativ nőnem: die → der" },
+          { q: "Er hilft ___ Mann. (Dativ, hímnem)", hint: "helfen → kinek? Dativ; hímnem → dem!", opts: ["der","die","dem","den"], c: 2, exp: "🇭🇺 'helfen' Dativet kíván. Hímnem Dativban: der → DEM.", rule: "Dativ hímnem: der → dem" },
+          { q: "Das gehört ___ Kind. (Dativ, semlegesnem)", hint: "gehören → kinek? Dativ; semlegesnem → dem!", opts: ["der","die","dem","das"], c: 2, exp: "🇭🇺 Semlegesnem Dativban: das → DEM.", rule: "Dativ semlegesnem: das → dem" },
+          { q: "Sie schreibt ___ Mutter einen Brief. (Dativ, nőnem)", hint: "schreiben → kinek? Dativ; nőnem → der", opts: ["die","der","das","dem"], c: 1, exp: "🇭🇺 'schreiben' kinek → Dativ. Mutter nőnem Dativban: der Mutter.", rule: "Dativ nőnem: der (pl. der Mutter)" },
+          { q: "Ich danke ___ Lehrer. (Dativ, hímnem)", hint: "danken → kinek? Dativ; hímnem → dem", opts: ["der","den","dem","die"], c: 2, exp: "🇭🇺 'danken' Dativet kíván! Lehrer hímnem Dativban: dem Lehrer.", rule: "danken + Dativ: dem Lehrer" },
+          { q: "Er fragt ___ Lehrer. (Akkusativ, hímnem)", hint: "fragen → kit? Akkusativ; hímnem → den!", opts: ["dem","der","die","den"], c: 3, exp: "🇭🇺 'fragen' Akkusativet kíván! fragen → den (Akk.) vs danken → dem (Dat.).", rule: "fragen + Akkusativ: den Lehrer" },
+          { q: "Mit ___ Freund gehe ich ins Kino. (Dativ, hímnem)", hint: "'mit' prepozíció mindig Dativet kíván!", opts: ["den","der","die","dem"], c: 3, exp: "🇭🇺 A 'mit' (valakivel) MINDIG Dativet kíván! Hímnem Dativban: dem. mit dem Freund.", rule: "mit + Dativ: mit dem Freund" },
+          { q: "Das Buch ist für ___ Kind. (Akkusativ, semlegesnem)", hint: "'für' prepozíció mindig Akkusativet kíván!", opts: ["dem","der","das","den"], c: 2, exp: "🇭🇺 A 'für' MINDIG Akkusativet kíván! Semlegesnem: das (nem változik!).", rule: "für + Akkusativ: für das Kind" },
+          { q: "Sie gibt ___ Bruder das Geld. (Dativ, hímnem)", hint: "geben → kinek? Dativ. Bruder = hímnem → dem", opts: ["den","der","dem","die"], c: 2, exp: "🇭🇺 'geben': Dativ (kinek?) + Akkusativ (mit?). Bruder hímnem Dativban: dem Bruder.", rule: "Dativ hímnem: dem Bruder" },
+          { q: "Er wartet auf ___ Bus. (Akkusativ, hímnem)", hint: "'warten auf' → Akkusativet kíván; hímnem → den", opts: ["dem","der","die","den"], c: 3, exp: "🇭🇺 'warten auf' Akkusativet kíván! Hímnem: der → den.", rule: "warten auf + Akkusativ: den Bus" },
+          { q: "Ich wohne bei ___ Familie. (Dativ, nőnem)", hint: "'bei' prepozíció → Dativ; nőnem → der", opts: ["die","der","das","den"], c: 1, exp: "🇭🇺 'bei' MINDIG Dativet kíván. Familie nőnem Dativban: der Familie.", rule: "bei + Dativ: bei der Familie" },
+          { q: "Er kauft ___ Vater ein Geschenk. (Dativ, hímnem)", hint: "kinek veszi? Vater = hímnem → dem", opts: ["den","der","dem","die"], c: 2, exp: "🇭🇺 Indirekttárgy (kinek?) Dativban áll. Vater hímnem Dativban: dem Vater.", rule: "Indirekt tárgy (kinek?) → Dativ: dem Vater" },
+        ]
+      },
+      {
+        category: "Modalverben", emoji: "🟣", categoryHU: "Módbeli segédigék: können/müssen/wollen/dürfen/sollen/möchten",
+        questions: [
+          { q: "Ich ___ Deutsch sprechen. (tudok)", hint: "tudni vmit → können; ich személy", opts: ["muss","will","kann","darf"], c: 2, exp: "🇭🇺 'können' = tudni vmit. ich KANN. A főige INFINITÍVUSZBAN a mondat végén!", rule: "können (tudni): ich kann" },
+          { q: "Du ___ das nicht machen! (nem szabad)", hint: "nem szabad → dürfen tagadva", opts: ["musst","sollst","kannst","darfst"], c: 3, exp: "🇭🇺 'dürfen' tagadva = nem szabad! du DARFST nicht.", rule: "dürfen tagadva = nem szabad: du darfst nicht" },
+          { q: "Er ___ jeden Tag zur Schule gehen. (kell/muszáj)", hint: "kényszert kifejező ige; er személy", opts: ["will","soll","muss","darf"], c: 2, exp: "🇭🇺 'müssen' = muszáj, kell (belső kényszer). er MUSS.", rule: "müssen (muszáj): er muss" },
+          { q: "Wir ___ ins Kino gehen. (akarunk)", hint: "akarni → wollen; wir személy", opts: ["müssen","sollen","wollen","dürfen"], c: 2, exp: "🇭🇺 'wollen' = akarni, szándékozni. wir WOLLEN.", rule: "wollen (akarni): wir wollen" },
+          { q: "Ihr ___ leiser sein! (kell – tanár mondja)", hint: "külső elvárás → sollen; ihr személy", opts: ["wollt","könnt","sollt","mögt"], c: 2, exp: "🇭🇺 'sollen' = mások elvárása szerint kell. ihr SOLLT.", rule: "sollen (elvárják): ihr sollt" },
+          { q: "Sie ___ sehr gut kochen. (tud/képes)", hint: "können; sie (ők) személy", opts: ["müssen","können","wollen","sollen"], c: 1, exp: "🇭🇺 'können' = képesség. sie (ők) KÖNNEN.", rule: "können képesség: sie können" },
+          { q: "Ich ___ einen Kaffee, bitte. (szeretnék)", hint: "udvarias kérés → möchten", opts: ["will","muss","möchte","soll"], c: 2, exp: "🇭🇺 'möchten' = szeretne (udvarias kérés). ich MÖCHTE. Étteremben: Ich möchte... = Szeretnék...", rule: "möchten (szeretne, udvarias): ich möchte" },
+          { q: "Du ___ mehr schlafen. (kellene – orvos mondja)", hint: "tanács → sollen; du személy", opts: ["willst","musst","sollst","darfst"], c: 2, exp: "🇭🇺 'sollen' mások elvárását fejezi ki. du SOLLST.", rule: "sollen tanács: du sollst" },
+          { q: "Kinder ___ im Unterricht nicht sprechen. (nem szabad)", hint: "tilalom → dürfen tagadva", opts: ["können nicht","müssen nicht","dürfen nicht","wollen nicht"], c: 2, exp: "🇭🇺 nicht dürfen = nem szabad (tiltás). nicht müssen = nem kell (nem kötelező).", rule: "Tiltás: nicht dürfen ≠ nicht müssen" },
+          { q: "Er ___ Arzt werden. (akar lenni)", hint: "szándék/vágy → wollen; er személy", opts: ["muss","soll","will","darf"], c: 2, exp: "🇭🇺 'wollen' = erős szándék. er WILL Arzt werden.", rule: "wollen szándék: er will" },
+          { q: "Ich ___ heute nicht arbeiten. (nem kell)", hint: "nem kötelező → nicht müssen; ich", opts: ["darf nicht","muss nicht","kann nicht","will nicht"], c: 1, exp: "🇭🇺 'nicht müssen' = nem kell. 'nicht dürfen' = nem szabad. Nagy különbség!", rule: "nicht müssen = nem kell ≠ nicht dürfen = nem szabad" },
+          { q: "Wir ___ hier parken. (szabad)", hint: "engedély → dürfen; wir személy", opts: ["müssen","sollen","dürfen","wollen"], c: 2, exp: "🇭🇺 'dürfen' = szabad (engedéllyel). wir DÜRFEN hier parken.", rule: "dürfen pozitívan: szabad vmit tenni" },
+        ]
+      },
+      {
+        category: "obwohl & trotzdem", emoji: "🔴", categoryHU: "Ellentétes kötőszavak: obwohl (bár/noha) & trotzdem (mégis)",
+        questions: [
+          { q: "Er kommt, ___ er krank ist.", hint: "'bár beteg' → obwohl + mellékmondat (ige a végén!)", opts: ["trotzdem","obwohl","weil","aber"], c: 1, exp: "🇭🇺 'obwohl' = bár, noha. Kötőszó → ige a mellékmondat VÉGÉN! Er kommt, obwohl er krank IST.", rule: "obwohl → ige a mellékmondat végén!" },
+          { q: "Er ist krank. ___ kommt er.", hint: "'mégis jön' → trotzdem + inverzió!", opts: ["obwohl","weil","trotzdem","aber"], c: 2, exp: "🇭🇺 'trotzdem' = mégis. Inverzió: trotzdem + ige + alany! Trotzdem KOMMT ER.", rule: "trotzdem → inverzió! trotzdem + ige + alany" },
+          { q: "Sie lernt Deutsch, ___ es schwer ist.", hint: "mellékmondat → obwohl; ige a végén", opts: ["trotzdem","obwohl","deswegen","darum"], c: 1, exp: "🇭🇺 obwohl + alany + ... + ige (végül). Sie lernt Deutsch, obwohl es schwer IST.", rule: "obwohl: ige a mellékmondat végén" },
+          { q: "Es regnet. ___ gehen wir spazieren.", hint: "Két főmondat, mégis → trotzdem + inverzió", opts: ["Obwohl","Trotzdem","Weil","Also"], c: 1, exp: "🇭🇺 trotzdem + GEHEN + WIR = inverzió!", rule: "trotzdem: mondatelején → ige + alany" },
+          { q: "Válaszd ki a helyes mondatot!", hint: "Bár fáradt vagyok, tanulok.", opts: ["Ich lerne, obwohl ich müde bin.","Ich lerne, trotzdem ich müde bin.","Obwohl ich bin müde, ich lerne.","Ich lerne, obwohl ich bin müde."], c: 0, exp: "🇭🇺 Helyes: 'obwohl ich müde BIN' – ige a VÉGÉN. Hibás variánsokban rossz szórend vagy trotzdem kötőszóként.", rule: "obwohl: ...obwohl [alany] [egyéb] [ige végén]" },
+          { q: "___ er viel übt, macht er Fehler.", hint: "'Bár sokat gyakorol' → obwohl mondatelején; főmondat inverziója!", opts: ["Trotzdem","Weil","Obwohl","Aber"], c: 2, exp: "🇭🇺 Obwohl mondatelején → főmondatban inverzió: Obwohl er viel übt, MACHT ER Fehler.", rule: "Obwohl mondatelején → főmondat inverziója!" },
+          { q: "Er hat kein Geld. ___ kauft er ein neues Handy.", hint: "mégis vesz → trotzdem; két főmondat", opts: ["Obwohl","Trotzdem","Weil","Deshalb"], c: 1, exp: "🇭🇺 trotzdem két főmondatot köt össze. Inverzió: Trotzdem KAUFT ER...", rule: "trotzdem + inverzió: Trotzdem kauft er" },
+          { q: "Ich mag ihn, ___ er manchmal unhöflich ist.", hint: "bár néha udvariatlan → obwohl, mellékmondat", opts: ["trotzdem","obwohl","weil","aber"], c: 1, exp: "🇭🇺 obwohl mellékmondat. Ich mag ihn, obwohl er manchmal unhöflich IST.", rule: "obwohl mellékmondat: ige a végén" },
+          { q: "Kösd össze trotzdem-mel! (Szeretem. Néha udvariatlan.)", hint: "Két főmondat + trotzdem inverzió", opts: ["Ich mag ihn, trotzdem er unhöflich ist.","Ich mag ihn. Trotzdem ist er manchmal unhöflich.","Trotzdem ich mag ihn, er ist unhöflich.","Ich mag ihn, obwohl trotzdem er unhöflich ist."], c: 1, exp: "🇭🇺 Helyes: 'Trotzdem IST ER...' – inverzió: ige + alany.", rule: "trotzdem + ige + alany (inverzió kötelező!)" },
+          { q: "Sie ist sehr jung. ___ ist sie sehr weise.", hint: "mégis bölcs → trotzdem + inverzió", opts: ["Obwohl","Weil","Trotzdem","Aber"], c: 2, exp: "🇭🇺 Trotzdem IST SIE sehr weise. Ige megelőzi az alanyt – inverzió.", rule: "Trotzdem + ige + alany: Trotzdem ist sie..." },
+          { q: "Er schläft, ___ es sehr laut ist.", hint: "Bár nagyon hangos → obwohl, mellékmondat", opts: ["trotzdem","weil","obwohl","denn"], c: 2, exp: "🇭🇺 'obwohl' mellékmondat. obwohl es sehr laut IST – ige a végén.", rule: "obwohl mellékmondat: ige a végén" },
+        ]
+      },
+      {
+        category: "Präsens", emoji: "🟢", categoryHU: "Jelen idejű igeragozás",
+        questions: [
+          { q: "Ich ___ jeden Tag. (lernen)", hint: "ich + szabályos ige → -e toldalék", opts: ["lernst","lernt","lerne","lernen"], c: 2, exp: "🇭🇺 Szabályos igék: ich lern-E, du lern-ST, er/sie/es lern-T, wir lern-EN, ihr lern-T, sie lern-EN.", rule: "ich + ige → -e (lerne)" },
+          { q: "Du ___ sehr schnell! (laufen)", hint: "laufen rendhagyó: a→äu", opts: ["laufst","läufst","laufen","lauft"], c: 1, exp: "🇭🇺 'laufen' rendhagyó: a→äu. du LÄUFST.", rule: "laufen rendhagyó: du läufst (a→äu)" },
+          { q: "Er ___ ein Buch. (lesen)", hint: "lesen rendhagyó: e→ie", opts: ["lest","liest","lesen","lese"], c: 1, exp: "🇭🇺 'lesen' rendhagyó: e→ie. er LIEST. Ugyanígy: sehen→sieht, geben→gibt.", rule: "lesen rendhagyó: er liest (e→ie)" },
+          { q: "Wir ___ ins Kino. (gehen)", hint: "gehen; wir → -en toldalék", opts: ["geht","gehst","gehe","gehen"], c: 3, exp: "🇭🇺 wir/sie/Sie: az ige az infinitívusszal egyezik: wir GEHEN.", rule: "wir + ige → -en (gehen)" },
+          { q: "Ihr ___ Fußball. (spielen)", hint: "ihr → -t toldalék", opts: ["spielen","spielst","spielt","spiele"], c: 2, exp: "🇭🇺 ihr személyben: -T toldalék: ihr SPIELT.", rule: "ihr + ige → -t (spielt)" },
+          { q: "Sie (ők) ___ in Berlin. (wohnen)", hint: "sie (ők) → -en toldalék", opts: ["wohnt","wohnst","wohnen","wohne"], c: 2, exp: "🇭🇺 sie (ők) és Sie (Ön): -EN toldalék. sie WOHNEN.", rule: "sie/Sie + ige → -en (wohnen)" },
+          { q: "Du ___ das Fenster. (öffnen)", hint: "öffnen: tő -n-re végződik → -est!", opts: ["öffnst","öffnest","öffnet","öffnen"], c: 1, exp: "🇭🇺 Tő -n,-m,-t,-d végű → e betoldás: öffn-EST (du), öffn-ET (er).", rule: "öffnen: du öffnest (e betoldás)" },
+          { q: "Er ___ gut. (schlafen)", hint: "schlafen rendhagyó: a→ä", opts: ["schlafen","schläfst","schläft","schlaft"], c: 2, exp: "🇭🇺 'schlafen' rendhagyó: a→ä. er SCHLÄFT.", rule: "schlafen rendhagyó: er schläft (a→ä)" },
+          { q: "Ich ___ nach Hause. (fahren)", hint: "fahren rendhagyó, de ich → szabályos!", opts: ["fährst","fährt","fahre","fahren"], c: 2, exp: "🇭🇺 Rendhagyó igéknél ICH személy SZABÁLYOS marad! ich FAHRE.", rule: "Rendhagyó igék: ich személynél szabályos!" },
+          { q: "Er ___ mir. (helfen)", hint: "helfen rendhagyó: e→i", opts: ["helfen","hilfst","hilft","helfet"], c: 2, exp: "🇭🇺 'helfen' rendhagyó: e→i. er HILFT. Ugyanígy: sprechen→spricht, treffen→trifft.", rule: "helfen rendhagyó: er hilft (e→i)" },
+          { q: "Du ___ sehr viel. (wissen)", hint: "wissen teljesen rendhagyó! du → weißt", opts: ["wisst","wissest","weißt","weiß"], c: 2, exp: "🇭🇺 'wissen' rendhagyó! ich weiß, du WEISST, er weiß, wir wissen.", rule: "wissen rendhagyó: du weißt" },
+        ]
+      },
+      {
+        category: "Verneinung", emoji: "🔴", categoryHU: "Tagadás: nicht (nem) és kein (nincs)",
+        questions: [
+          { q: "Ich bin ___ müde.", hint: "Melléknevet tagadunk → nicht", opts: ["kein","keine","nicht","nein"], c: 2, exp: "🇭🇺 'nicht' = igéket, mellékneveket, határozókat tagad. 'kein' = főneveket tagad.", rule: "nicht: melléknevet/igét tagad" },
+          { q: "Ich habe ___ Auto.", hint: "Főnevet tagadunk → kein; semlegesnem", opts: ["nicht","kein","keine","keinen"], c: 1, exp: "🇭🇺 Főnevet 'kein' tagad. Auto = semlegesnem → kein Auto.", rule: "kein: semlegesnem főnév tagadása" },
+          { q: "Das ist ___ Hund.", hint: "Főnevet tagadunk → kein; hímnem", opts: ["nicht","kein","keine","keinen"], c: 1, exp: "🇭🇺 Hímnem alanyesetben: kein Hund. (ein Hund → kein Hund).", rule: "kein: hímnem alanyeset" },
+          { q: "Sie hat ___ Katze.", hint: "Főnevet tagadunk → keine; nőnem", opts: ["kein","keinen","keine","nicht"], c: 2, exp: "🇭🇺 Nőnem: eine Katze → KEINE Katze.", rule: "keine: nőnem főnév tagadása" },
+          { q: "Er kommt ___ heute.", hint: "Időhatározót tagadunk → nicht", opts: ["kein","keine","nicht","keinen"], c: 2, exp: "🇭🇺 Határozókat 'nicht'-tel tagadjuk. Er kommt NICHT heute.", rule: "nicht: határozót tagad" },
+          { q: "Ich kaufe ___ Buch. (Akkusativ, semlegesnem)", hint: "Főnevet tagadunk → kein; semlegesnem Akkusativ", opts: ["kein","keine","keinen","nicht"], c: 0, exp: "🇭🇺 Semlegesnem tárgyesetben: ein Buch → kein Buch. Csak hímnem változik: einen→keinen.", rule: "kein Buch: semlegesnem Akkusativ" },
+          { q: "Er hat ___ Bruder. (Akkusativ, hímnem)", hint: "Hímnem tárgyeset tagadása → keinen!", opts: ["kein","keine","keinen","nicht"], c: 2, exp: "🇭🇺 Hímnem tárgyesetben: einen Bruder → KEINEN Bruder.", rule: "keinen: hímnem Akkusativ tagadása" },
+          { q: "Sie spricht ___ Englisch.", hint: "Igét tagadunk → nicht", opts: ["kein","keine","keinen","nicht"], c: 3, exp: "🇭🇺 Igéket 'nicht'-tel tagadjuk. Sie spricht NICHT Englisch.", rule: "nicht: igét tagad" },
+          { q: "Das ist ___ Problem!", hint: "Főnevet tagadunk → kein; semlegesnem", opts: ["nicht","kein","keine","keinen"], c: 1, exp: "🇭🇺 Problem = semlegesnem. ein Problem → kein Problem.", rule: "kein: semlegesnem főnév" },
+          { q: "Ich mag das ___ gern.", hint: "'gern' határozót tagadunk → nicht", opts: ["kein","keinen","keine","nicht"], c: 3, exp: "🇭🇺 'gern' határozó → 'nicht gern' = nem szívesen.", rule: "nicht: 'gern' → nicht gern" },
+        ]
+      },
+      {
+        category: "Wortstellung", emoji: "🟤", categoryHU: "Szórend – az ige mindig a 2. helyen!",
+        questions: [
+          { q: "Melyik helyes? (Tegnap moziba mentem.)", hint: "Gestern mondatkezdet → inverzió!", opts: ["Gestern ich ging ins Kino.","Gestern ging ich ins Kino.","Ich gestern ins Kino ging.","Ins Kino ich gestern ging."], c: 1, exp: "🇭🇺 Nem alannyal kezdve → inverzió: Gestern GING ICH...", rule: "Nem-alannyal kezdve → ige + alany (inverzió)" },
+          { q: "Melyik helyes? (Holnap tanulok.)", hint: "Morgen mondatkezdet → inverzió", opts: ["Morgen ich lerne.","Morgen lerne ich.","Ich morgen lerne.","Lerne morgen ich."], c: 1, exp: "🇭🇺 Morgen mondatelején → inverzió: Morgen LERNE ICH.", rule: "Morgen → inverzió: Morgen lerne ich" },
+          { q: "Ich ___ gestern ins Kino ___ . (gehen, Perfekt)", hint: "Perfektben: sein 2. helyen, Partizip a VÉGÉN!", opts: ["bin ... gegangen","gegangen ... bin","habe ... gegangen","bin ... gehen"], c: 0, exp: "🇭🇺 Perfektben: segédige (bin) 2. helyen, Partizip (gegangen) a VÉGÉN.", rule: "Perfekt: sein/haben [2.hely] ... Partizip [végén]" },
+          { q: "Er sagt, dass er ___ . (er ist müde)", hint: "dass-mellékmondat: ige a végre kerül!", opts: ["dass er ist müde","dass er müde ist","dass ist er müde","dass müde er ist"], c: 1, exp: "🇭🇺 Mellékmondatban (weil, dass, obwohl) az ige a VÉGÉN! ...dass er müde IST.", rule: "Mellékmondat: ige a végén!" },
+          { q: "Melyik helyes? (Ma otthon vagyok.)", hint: "Heute mondatkezdet → inverzió", opts: ["Heute ich bin zu Hause.","Heute bin ich zu Hause.","Heute ich zu Hause bin.","Bin heute ich zu Hause."], c: 1, exp: "🇭🇺 Heute mondatelején → inverzió: Heute BIN ICH zu Hause.", rule: "Heute → inverzió: Heute bin ich" },
+          { q: "Ich ___ morgen ___ . (nicht, kommen)", hint: "nicht helye: időhatározó után!", opts: ["nicht komme morgen","komme nicht morgen","komme morgen nicht","morgen komme nicht"], c: 2, exp: "🇭🇺 'nicht' az időhatározó (morgen) UTÁN: Ich komme morgen NICHT.", rule: "nicht: időhatározó (morgen) után" },
+          { q: "Weil er krank ___ , bleibt er zu Hause.", hint: "weil-mellékmondat: ige a végén", opts: ["ist","sein","ist er","er ist"], c: 0, exp: "🇭🇺 'weil' mellékmondat → ige a végén. weil er krank IST.", rule: "weil mellékmondat: ige végén" },
+          { q: "Ich ___ ein Buch ___ . (möchten + lesen)", hint: "Modalverb 2. helyen, főige infinitívuszban a végén!", opts: ["lese möchte ein Buch","möchte ein Buch lesen","möchte lesen ein Buch","ein Buch lesen möchte"], c: 1, exp: "🇭🇺 Modalverb a 2. helyen, főige INFINITÍVUSZBAN a VÉGÉN. Ich möchte ein Buch LESEN.", rule: "Modalverb: [2.hely] ... főige infinitívusz [végén]" },
+          { q: "Er ___ das Buch ___ lesen. (nicht, können)", hint: "Modalverb + tagadás + infinitívusz sorrendje", opts: ["nicht kann das Buch lesen","kann nicht das Buch lesen","kann das Buch lesen nicht","kann das Buch nicht lesen"], c: 3, exp: "🇭🇺 'nicht' az infinitívusz ELŐTT (de tárgy után): Er kann das Buch NICHT LESEN.", rule: "Modalverb + nicht: kann das Buch nicht lesen" },
+          { q: "Melyik helyes? (Soha nem eszem húst.)", hint: "Nie = soha; természetes szórend", opts: ["Nie ich esse Fleisch.","Nie esse ich Fleisch.","Ich nie esse Fleisch.","Ich esse nie Fleisch."], c: 3, exp: "🇭🇺 Természetesebb: Ich esse NIE Fleisch. De Nie esse ich is helyes (inverzió).", rule: "nie (soha): ige után is állhat: Ich esse nie" },
+        ]
+      }
+    ];
+
+    const allQuestions = quizData.flatMap((cat, ci) =>
+      cat.questions.map((q) => ({ ...q, category: cat.category, emoji: cat.emoji, categoryHU: cat.categoryHU, catIndex: ci }))
+    );
+    const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+
+    function App() {
+      const [screen, setScreen] = React.useState("menu");
+      const [selectedCat, setSelectedCat] = React.useState(null);
+      const [questions, setQuestions] = React.useState([]);
+      const [current, setCurrent] = React.useState(0);
+      const [selected, setSelected] = React.useState(null);
+      const [showExp, setShowExp] = React.useState(false);
+      const [score, setScore] = React.useState(0);
+      const [answers, setAnswers] = React.useState([]);
+      const [streak, setStreak] = React.useState(0);
+      const [bestStreak, setBestStreak] = React.useState(0);
+
+      const startQuiz = (catIndex) => {
+        const pool = catIndex === null ? allQuestions : allQuestions.filter(q => q.catIndex === catIndex);
+        setQuestions(shuffle(pool));
+        setSelectedCat(catIndex);
+        setCurrent(0); setSelected(null); setShowExp(false);
+        setScore(0); setAnswers([]); setStreak(0); setBestStreak(0);
+        setScreen("quiz");
+      };
+
+      const handleAnswer = (idx) => {
+        if (selected !== null) return;
+        setSelected(idx);
+        setShowExp(true);
+        const correct = idx === questions[current].c;
+        if (correct) {
+          setScore(s => s + 1);
+          setStreak(s => { const ns = s + 1; setBestStreak(b => Math.max(b, ns)); return ns; });
+        } else setStreak(0);
+        setAnswers(a => [...a, { correct, question: questions[current].q }]);
+      };
+
+      const next = () => {
+        if (current + 1 >= questions.length) setScreen("result");
+        else { setCurrent(c => c + 1); setSelected(null); setShowExp(false); }
+      };
+
+      const q = questions[current];
+      const pct = questions.length ? Math.round((score / questions.length) * 100) : 0;
+      const grade = pct >= 90 ? { text: "Ausgezeichnet! 🏆", hu: "Kiváló!", color: "#22c55e" }
+        : pct >= 70 ? { text: "Sehr gut! 🌟", hu: "Nagyon jó!", color: "#84cc16" }
+        : pct >= 50 ? { text: "Gut! 👍", hu: "Jó!", color: "#f59e0b" }
+        : { text: "Weiter üben! 💪", hu: "Gyakorolj tovább!", color: "#ef4444" };
+
+      const totalQ = allQuestions.length;
+      const S = (style) => style;
+
+      return (
+        <div style={S({ padding: "16px", maxWidth: 680, margin: "0 auto", minHeight: "100vh" })}>
+
+          {/* MENU */}
+          {screen === "menu" && (
+            <div>
+              <div style={S({ textAlign: "center", marginBottom: 28 })}>
+                <div style={S({ fontSize: "2.8rem", marginBottom: 8 })}>🇩🇪📖🇭🇺</div>
+                <h1 style={S({ fontSize: "1.8rem", fontWeight: "bold", margin: 0, background: "linear-gradient(90deg, #ffd700, #ff8c00)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" })}>DeutschMeister v1</h1>
+                <p style={S({ color: "#c4b5a0", marginTop: 6, fontSize: "0.9rem" })}>Grammatik Quiz · Magyar magyarázatokkal · {totalQ} kérdés</p>
+              </div>
+              <div style={S({ background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "12px 16px", border: "1px solid rgba(255,215,0,0.2)", marginBottom: 18 })}>
+                <p style={S({ margin: 0, color: "#c4b5a0", fontSize: "0.85rem", lineHeight: 1.6 })}>Válassz témakört vagy kezdd az összes kérdéssel! Minden válasz után magyar magyarázat. 🎯</p>
+              </div>
+              <div style={S({ display: "flex", flexDirection: "column", gap: 8 })}>
+                <button onClick={() => startQuiz(null)} style={S({ background: "linear-gradient(135deg, #ffd700, #ff8c00)", border: "none", borderRadius: 12, padding: "14px 18px", color: "#1a1a2e", fontWeight: "bold", fontSize: "0.97rem", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 4px 16px rgba(255,165,0,0.3)" })}>
+                  <span>⚡ Összes kérdés ({totalQ} kérdés)</span><span>→</span>
+                </button>
+                {quizData.map((cat, i) => (
+                  <button key={i} onClick={() => startQuiz(i)} style={S({ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,215,0,0.2)", borderRadius: 12, padding: "12px 16px", color: "#f0e6d3", fontSize: "0.88rem", display: "flex", alignItems: "center", justifyContent: "space-between" })}>
+                    <div style={S({ textAlign: "left" })}>
+                      <div style={S({ fontWeight: "bold", color: "#ffd700" })}>{cat.emoji} {cat.category}</div>
+                      <div style={S({ fontSize: "0.75rem", color: "#a09080", marginTop: 2 })}>{cat.categoryHU} · {cat.questions.length} kérdés</div>
+                    </div>
+                    <span style={S({ color: "#ffd700" })}>→</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* QUIZ */}
+          {screen === "quiz" && q && (
+            <div>
+              <div style={S({ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 })}>
+                <button onClick={() => setScreen("menu")} style={S({ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.14)", borderRadius: 8, padding: "5px 11px", color: "#c4b5a0", fontSize: "0.8rem" })}>← Vissza</button>
+                <div style={S({ display: "flex", gap: 8, alignItems: "center" })}>
+                  {streak >= 2 && <span style={S({ background: "#ff6b35", borderRadius: 20, padding: "3px 9px", fontSize: "0.75rem" })}>🔥 {streak}</span>}
+                  <span style={S({ color: "#ffd700", fontWeight: "bold", fontSize: "0.88rem" })}>{current + 1} / {questions.length}</span>
+                </div>
+              </div>
+              <div style={S({ background: "rgba(255,255,255,0.08)", borderRadius: 8, height: 5, marginBottom: 14 })}>
+                <div style={S({ background: "linear-gradient(90deg, #ffd700, #ff8c00)", height: "100%", borderRadius: 8, width: `${(current / questions.length) * 100}%`, transition: "width 0.4s" })} />
+              </div>
+              <span style={S({ background: "rgba(255,215,0,0.12)", border: "1px solid rgba(255,215,0,0.3)", borderRadius: 20, padding: "3px 11px", fontSize: "0.75rem", color: "#ffd700" })}>{q.emoji} {q.category}</span>
+              <div style={S({ background: "rgba(255,255,255,0.06)", borderRadius: 12, padding: "18px", margin: "12px 0 14px", border: "1px solid rgba(255,255,255,0.08)" })}>
+                <p style={S({ margin: "0 0 10px", fontSize: "1.05rem", lineHeight: 1.5, fontStyle: "italic" })}>{q.q}</p>
+                <div style={S({ background: "rgba(255,215,0,0.07)", borderRadius: 6, padding: "6px 11px", fontSize: "0.78rem", color: "#c4b5a0", borderLeft: "3px solid #ffd700" })}>💡 {q.hint}</div>
+              </div>
+              <div style={S({ display: "flex", flexDirection: "column", gap: 8, marginBottom: 14 })}>
+                {q.opts.map((opt, i) => {
+                  const isCorrect = i === q.c, isSelected = i === selected;
+                  let bg = "rgba(255,255,255,0.06)", border = "1px solid rgba(255,255,255,0.12)", color = "#f0e6d3";
+                  if (selected !== null) {
+                    if (isCorrect) { bg = "rgba(34,197,94,0.17)"; border = "1px solid #22c55e"; color = "#86efac"; }
+                    else if (isSelected) { bg = "rgba(239,68,68,0.17)"; border = "1px solid #ef4444"; color = "#fca5a5"; }
+                  }
+                  return (
+                    <button key={i} onClick={() => handleAnswer(i)} style={S({ background: bg, border, borderRadius: 10, padding: "11px 14px", color, fontSize: "0.88rem", textAlign: "left", display: "flex", alignItems: "center", gap: 9 })}>
+                      <span style={S({ width: 24, height: 24, borderRadius: "50%", flexShrink: 0, background: selected !== null && isCorrect ? "#22c55e" : selected !== null && isSelected ? "#ef4444" : "rgba(255,255,255,0.09)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.78rem", fontWeight: "bold" })}>
+                        {selected !== null && isCorrect ? "✓" : selected !== null && isSelected ? "✗" : String.fromCharCode(65 + i)}
+                      </span>
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
+              {showExp && (
+                <div style={S({ background: selected === q.c ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${selected === q.c ? "#22c55e" : "#ef4444"}`, borderRadius: 11, padding: "13px 15px", marginBottom: 12 })}>
+                  <div style={S({ fontWeight: "bold", marginBottom: 6, color: selected === q.c ? "#86efac" : "#fca5a5", fontSize: "0.9rem" })}>{selected === q.c ? "✅ Helyes!" : "❌ Nem egészen..."}</div>
+                  <p style={S({ margin: "0 0 8px", fontSize: "0.85rem", lineHeight: 1.65, color: "#e2d5c3" })}>{q.exp}</p>
+                  <div style={S({ background: "rgba(255,215,0,0.08)", borderRadius: 6, padding: "5px 10px", fontSize: "0.77rem", color: "#ffd700", fontWeight: "bold" })}>📌 Szabály: {q.rule}</div>
+                </div>
+              )}
+              {showExp && (
+                <button onClick={next} style={S({ width: "100%", background: "linear-gradient(135deg, #ffd700, #ff8c00)", border: "none", borderRadius: 10, padding: "13px", color: "#1a1a2e", fontWeight: "bold", fontSize: "0.93rem" })}>
+                  {current + 1 >= questions.length ? "Eredmény megtekintése 🏁" : "Következő →"}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* RESULT */}
+          {screen === "result" && (
+            <div style={S({ textAlign: "center" })}>
+              <div style={S({ fontSize: "3rem", marginBottom: 10 })}>{pct >= 90 ? "🏆" : pct >= 70 ? "🌟" : pct >= 50 ? "👍" : "💪"}</div>
+              <h2 style={S({ fontSize: "1.7rem", margin: "0 0 4px", background: `linear-gradient(90deg, ${grade.color}, #ffd700)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" })}>{grade.text}</h2>
+              <p style={S({ color: "#c4b5a0", marginBottom: 22, fontSize: "0.97rem" })}>{grade.hu}</p>
+              <div style={S({ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 22 })}>
+                {[{ label: "Helyes", value: `${score}/${questions.length}`, icon: "✅" }, { label: "Eredmény", value: `${pct}%`, icon: "📊" }, { label: "Max sorozat", value: bestStreak, icon: "🔥" }].map((s, i) => (
+                  <div key={i} style={S({ background: "rgba(255,255,255,0.06)", borderRadius: 11, padding: "14px 8px", border: "1px solid rgba(255,215,0,0.17)" })}>
+                    <div style={S({ fontSize: "1.2rem", marginBottom: 3 })}>{s.icon}</div>
+                    <div style={S({ fontSize: "1.4rem", fontWeight: "bold", color: "#ffd700" })}>{s.value}</div>
+                    <div style={S({ fontSize: "0.7rem", color: "#a09080", marginTop: 2 })}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={S({ textAlign: "left", marginBottom: 18 })}>
+                <h3 style={S({ color: "#ffd700", fontSize: "0.76rem", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 })}>Válaszaid</h3>
+                {answers.map((a, i) => (
+                  <div key={i} style={S({ display: "flex", gap: 7, padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontSize: "0.8rem" })}>
+                    <span style={S({ flexShrink: 0 })}>{a.correct ? "✅" : "❌"}</span>
+                    <span style={S({ color: a.correct ? "#86efac" : "#fca5a5" })}>{a.question}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={S({ display: "flex", flexDirection: "column", gap: 8 })}>
+                <button onClick={() => startQuiz(selectedCat)} style={S({ background: "linear-gradient(135deg, #ffd700, #ff8c00)", border: "none", borderRadius: 10, padding: "13px", color: "#1a1a2e", fontWeight: "bold", fontSize: "0.93rem" })}>🔄 Újra próbálom</button>
+                <button onClick={() => setScreen("menu")} style={S({ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.17)", borderRadius: 10, padding: "11px", color: "#f0e6d3", fontSize: "0.93rem" })}>🏠 Főmenü</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
