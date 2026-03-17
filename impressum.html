@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Impressum – Shoriu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sakura:   #e8a0b0;
+      --sakura-light: #f5dce3;
+      --ink:      #1a1612;
+      --ink-soft: #4a3f38;
+      --parchment: #faf8f5;
+      --line:     rgba(26,22,18,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--parchment);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
+      font-weight: 300;
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    /* ── Kanji watermark ── */
+    body::before {
+      content: '書流';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(180px, 28vw, 340px);
+      font-weight: 200;
+      color: rgba(232, 160, 176, 0.06);
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    /* ── Top bar ── */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(250, 248, 245, 0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 200;
+      font-size: 1.25rem;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .logo span { color: var(--sakura); }
+
+    .back-link {
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      text-decoration: none;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    .back-link:hover { opacity: 1; }
+
+    /* ── Main ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 9rem 2rem 6rem;
+    }
+
+    /* ── Page title ── */
+    .page-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-bottom: 4rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .page-title .kanji {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 200;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      color: var(--sakura);
+    }
+
+    .page-title h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2.2rem, 5vw, 3rem);
+      line-height: 1.1;
+      letter-spacing: 0.01em;
+    }
+
+    .page-title .subtitle {
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      opacity: 0.5;
+      margin-top: 0.5rem;
+    }
+
+    /* ── Sections ── */
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sakura);
+      margin-bottom: 0.75rem;
+    }
+
+    section p, section address {
+      font-size: 0.975rem;
+      color: var(--ink-soft);
+      font-style: normal;
+      line-height: 1.9;
+    }
+
+    section a {
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--sakura-light);
+      transition: border-color 0.2s;
+    }
+    section a:hover { border-color: var(--sakura); }
+
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: var(--sakura);
+      opacity: 0.4;
+      margin: 3rem 0;
+    }
+
+    .note {
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      opacity: 0.55;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-soft);
+      opacity: 0.4;
+    }
+
+    /* ── Fade in ── */
+    main { animation: fadeUp 0.7s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 1.25rem 1.5rem; }
+      main { padding: 7rem 1.5rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">書流 <span>Shoriu</span></a>
+  <a href="/" class="back-link">← Zurück</a>
+</header>
+
+<main>
+  <div class="page-title">
+    <span class="kanji">印象 — Impressum</span>
+    <h1>Impressum</h1>
+    <p class="subtitle">Gemäß § 5 ECG (Österreich)</p>
+  </div>
+
+  <section>
+    <h2>Betreiber</h2>
+    <address>
+      Adam Kovacs<br />
+      Unter Hub 6<br />
+      6844 Altach<br />
+      Österreich
+    </address>
+  </section>
+
+  <div class="divider"></div>
+
+  <section>
+    <h2>Kontakt</h2>
+    <p>
+      Kontaktformular: <a href="/#contact">shoriu.com/#contact</a><br />
+      E-Mail: <a href="mailto:shoriu@outlook.com">shoriu@outlook.com</a>
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <section>
+    <h2>Unternehmensgegenstand</h2>
+    <p>
+      Entwicklung und Vertrieb von Software-as-a-Service Lösungen für kleine und mittlere Unternehmen. Aktuelles Produkt: HandOver – digitale Übergabe- und Signaturlösung für Lager- und Logistikprozesse.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <section>
+    <h2>UID / Gewerbeanmeldung</h2>
+    <p>Derzeit nicht gewerberechtlich eingetragen. Kein aktiver Verkauf.</p>
+    <p class="note" style="margin-top:0.5rem;">* Dieses Impressum wird bei Aufnahme einer gewerblichen Tätigkeit entsprechend aktualisiert.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <section>
+    <h2>Haftungsausschluss</h2>
+    <p>
+      Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <section>
+    <h2>Urheberrecht</h2>
+    <p>
+      Alle Inhalte dieser Website (Texte, Grafiken, Logos, Design) sind urheberrechtlich geschützt und Eigentum von Adam Kovacs / Shoriu. Eine Vervielfältigung oder Verwendung ohne ausdrückliche schriftliche Genehmigung ist untersagt.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  &copy; <span id="year"></span> Shoriu · Adam Kovacs · Altach, Österreich
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

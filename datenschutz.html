@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Datenschutzerklärung – Shoriu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sakura:       #e8a0b0;
+      --sakura-light: #f5dce3;
+      --ink:          #1a1612;
+      --ink-soft:     #4a3f38;
+      --parchment:    #faf8f5;
+      --line:         rgba(26,22,18,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--parchment);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
+      font-weight: 300;
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '個人情報';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(100px, 18vw, 220px);
+      font-weight: 200;
+      color: rgba(232, 160, 176, 0.05);
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(250, 248, 245, 0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 200;
+      font-size: 1.25rem;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .logo span { color: var(--sakura); }
+
+    .back-link {
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      text-decoration: none;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    .back-link:hover { opacity: 1; }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 9rem 2rem 6rem;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-bottom: 4rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .page-title .kanji {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 200;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      color: var(--sakura);
+    }
+
+    .page-title h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      line-height: 1.1;
+    }
+
+    .page-title .subtitle {
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      opacity: 0.5;
+      margin-top: 0.5rem;
+    }
+
+    section { margin-bottom: 2.8rem; }
+
+    section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sakura);
+      margin-bottom: 0.75rem;
+    }
+
+    section h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      margin: 1.25rem 0 0.4rem;
+    }
+
+    section p {
+      font-size: 0.975rem;
+      color: var(--ink-soft);
+      line-height: 1.9;
+      margin-bottom: 0.75rem;
+    }
+
+    section ul {
+      padding-left: 1.2rem;
+      font-size: 0.955rem;
+      color: var(--ink-soft);
+      line-height: 1.9;
+    }
+
+    section ul li { margin-bottom: 0.3rem; }
+
+    section a {
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--sakura-light);
+      transition: border-color 0.2s;
+    }
+    section a:hover { border-color: var(--sakura); }
+
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: var(--sakura);
+      opacity: 0.4;
+      margin: 2.5rem 0;
+    }
+
+    .last-updated {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: var(--ink-soft);
+      opacity: 0.4;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--line);
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-soft);
+      opacity: 0.4;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 1.25rem 1.5rem; }
+      main { padding: 7rem 1.5rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">書流 <span>Shoriu</span></a>
+  <a href="/" class="back-link">← Zurück</a>
+</header>
+
+<main>
+  <div class="page-title">
+    <span class="kanji">プライバシー — Datenschutz</span>
+    <h1>Datenschutzerklärung</h1>
+    <p class="subtitle">Gemäß DSGVO &amp; DSG (Österreich)</p>
+  </div>
+
+  <!-- 1 -->
+  <section>
+    <h2>1. Verantwortlicher</h2>
+    <p>
+      Verantwortlicher im Sinne der DSGVO für die Verarbeitung personenbezogener Daten auf dieser Website ist:
+    </p>
+    <p>
+      <strong>Adam Kovacs</strong><br />
+      Unter Hub 6, 6844 Altach, Österreich<br />
+      E-Mail: <a href="mailto:shoriu@outlook.com">shoriu@outlook.com</a><br />
+      Kontaktformular: <a href="/#contact">shoriu.com/#contact</a>
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 2 -->
+  <section>
+    <h2>2. Welche Daten wir erfassen</h2>
+
+    <h3>Beim Besuch der Website</h3>
+    <p>
+      Beim Aufruf unserer Website werden durch den Webserver automatisch folgende Daten im sog. Server-Log erfasst:
+    </p>
+    <ul>
+      <li>IP-Adresse des anfragenden Geräts (anonymisiert)</li>
+      <li>Datum und Uhrzeit des Zugriffs</li>
+      <li>Aufgerufene URL</li>
+      <li>Browser-Typ und -Version</li>
+      <li>Betriebssystem</li>
+    </ul>
+    <p>Diese Daten sind für den technischen Betrieb erforderlich und werden nicht mit anderen Datenquellen zusammengeführt.</p>
+
+    <h3>Über das Kontaktformular</h3>
+    <p>
+      Wenn du uns über das Kontaktformular eine Nachricht sendest, werden folgende Daten verarbeitet:
+    </p>
+    <ul>
+      <li>Deine E-Mail-Adresse</li>
+      <li>Der Inhalt deiner Nachricht</li>
+      <li>Ggf. dein Name, sofern angegeben</li>
+    </ul>
+
+    <h3>Waitlist-Anmeldung</h3>
+    <p>
+      Bei der Anmeldung zur Warteliste für HandOver erfassen wir ausschließlich deine E-Mail-Adresse, um dich über den Launch zu informieren.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 3 -->
+  <section>
+    <h2>3. Rechtsgrundlage</h2>
+    <p>
+      Die Verarbeitung deiner Daten erfolgt auf Basis folgender Rechtsgrundlagen der DSGVO:
+    </p>
+    <ul>
+      <li><strong>Art. 6 Abs. 1 lit. a DSGVO</strong> – Einwilligung (z.B. Waitlist-Anmeldung)</li>
+      <li><strong>Art. 6 Abs. 1 lit. b DSGVO</strong> – Vertragsanbahnung / -erfüllung</li>
+      <li><strong>Art. 6 Abs. 1 lit. f DSGVO</strong> – Berechtigtes Interesse (technischer Betrieb der Website)</li>
+    </ul>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 4 -->
+  <section>
+    <h2>4. Weitergabe von Daten</h2>
+    <p>
+      Deine personenbezogenen Daten werden grundsätzlich nicht an Dritte weitergegeben. Eine Übermittlung erfolgt nur dann, wenn:
+    </p>
+    <ul>
+      <li>du ausdrücklich eingewilligt hast,</li>
+      <li>dies zur Vertragserfüllung notwendig ist,</li>
+      <li>eine gesetzliche Verpflichtung besteht.</li>
+    </ul>
+    <p>
+      Für das Hosting der Website nutzen wir externe Dienstleister (Webhosting). Diese verarbeiten Daten ausschließlich gemäß unserer Weisung und sind vertraglich zur Einhaltung der DSGVO verpflichtet.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 5 -->
+  <section>
+    <h2>5. Cookies</h2>
+    <p>
+      Diese Website verwendet derzeit <strong>keine Tracking-Cookies</strong> und keine Analyse-Tools wie Google Analytics. Es werden ausschließlich technisch notwendige Cookies eingesetzt, soweit dies für den Betrieb der Website erforderlich ist.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 6 -->
+  <section>
+    <h2>6. Speicherdauer</h2>
+    <p>
+      Personenbezogene Daten werden nur so lange gespeichert, wie es für den jeweiligen Zweck erforderlich ist oder gesetzliche Aufbewahrungspflichten bestehen. Kontaktanfragen werden nach abschließender Bearbeitung gelöscht, spätestens nach 12 Monaten.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 7 -->
+  <section>
+    <h2>7. Deine Rechte</h2>
+    <p>Du hast gegenüber uns folgende Rechte:</p>
+    <ul>
+      <li><strong>Auskunft</strong> – Art. 15 DSGVO</li>
+      <li><strong>Berichtigung</strong> – Art. 16 DSGVO</li>
+      <li><strong>Löschung</strong> – Art. 17 DSGVO</li>
+      <li><strong>Einschränkung der Verarbeitung</strong> – Art. 18 DSGVO</li>
+      <li><strong>Datenübertragbarkeit</strong> – Art. 20 DSGVO</li>
+      <li><strong>Widerspruch</strong> – Art. 21 DSGVO</li>
+      <li><strong>Widerruf einer Einwilligung</strong> – Art. 7 Abs. 3 DSGVO</li>
+    </ul>
+    <p>
+      Zur Ausübung dieser Rechte wende dich an: <a href="mailto:shoriu@outlook.com">shoriu@outlook.com</a>
+    </p>
+    <p>
+      Du hast zudem das Recht, dich bei der österreichischen Datenschutzbehörde zu beschweren:<br />
+      <a href="https://www.dsb.gv.at" target="_blank" rel="noopener">www.dsb.gv.at</a>
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 8 -->
+  <section>
+    <h2>8. Externe Links</h2>
+    <p>
+      Diese Website kann Links zu externen Websites enthalten. Für deren Inhalte und Datenschutzpraktiken sind ausschließlich die jeweiligen Betreiber verantwortlich.
+    </p>
+  </section>
+
+  <p class="last-updated">
+    Stand: <span id="date"></span> · Shoriu, Adam Kovacs
+  </p>
+
+</main>
+
+<footer>
+  &copy; <span id="year"></span> Shoriu · Adam Kovacs · Altach, Österreich
+</footer>
+
+<script>
+  const now = new Date();
+  document.getElementById('year').textContent = now.getFullYear();
+  document.getElementById('date').textContent =
+    now.toLocaleDateString('de-AT', { year: 'numeric', month: 'long' });
+</script>
+
+</body>
+</html>
