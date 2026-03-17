@@ -239,6 +239,64 @@
       .wf-step { border-right: 1px solid rgba(232,137,154,.1); }
       .wf-arrow { display: none; }
     }
+
+    /* ── Contact Modal ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(44,26,34,.6); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center; padding: 2rem;
+    }
+    .modal-overlay.open { display: flex; animation: modalFadeIn .25s ease; }
+    @keyframes modalFadeIn { from { opacity:0; } to { opacity:1; } }
+    .modal-box {
+      background: var(--pantone-ink); border: 1px solid rgba(232,137,154,.15);
+      border-radius: 20px; padding: 3rem 2.4rem; width: 100%; max-width: 480px;
+      position: relative; animation: modalSlideUp .3s cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes modalSlideUp { from { transform:translateY(24px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+    .modal-close {
+      position: absolute; top: 1.2rem; right: 1.4rem;
+      background: none; border: none; cursor: pointer;
+      color: rgba(249,232,236,.35); font-size: 1.3rem; line-height: 1;
+      transition: color .2s;
+    }
+    .modal-close:hover { color: var(--sakura-2); }
+    .modal-box h3 {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.8rem;
+      font-weight: 300; color: var(--sakura-1); margin-bottom: .4rem;
+    }
+    .modal-box h3 em { font-style: italic; color: var(--sakura-3); }
+    .modal-box .modal-sub {
+      font-size: .82rem; color: rgba(249,232,236,.35);
+      margin-bottom: 2rem; letter-spacing: .04em;
+    }
+    .modal-fields { display: flex; flex-direction: column; gap: .9rem; }
+    .modal-field { display: flex; flex-direction: column; gap: .35rem; }
+    .modal-label { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--pantone-rose); }
+    .modal-input {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(232,137,154,.15);
+      border-radius: 8px; padding: 11px 16px;
+      font-family: 'DM Sans', sans-serif; font-size: .88rem;
+      color: var(--sakura-1); outline: none; transition: border-color .2s, background .2s;
+    }
+    .modal-input::placeholder { color: rgba(249,232,236,.18); }
+    .modal-input:focus { border-color: var(--sakura-3); background: rgba(255,255,255,.08); }
+    .modal-textarea { resize: vertical; min-height: 100px; }
+    .modal-submit {
+      margin-top: .6rem; width: 100%;
+      background: var(--sakura-4); color: white; border: none; cursor: pointer;
+      padding: 13px; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: .88rem;
+      letter-spacing: .08em; text-transform: uppercase;
+      transition: background .2s, transform .15s;
+    }
+    .modal-submit:hover { background: #b04060; transform: translateY(-1px); }
+    .modal-success { display:none; text-align:center; padding: 1rem 0; }
+    .modal-success p:first-child {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.5rem;
+      font-style: italic; color: var(--sakura-2); margin-bottom: .5rem;
+    }
+    .modal-success p:last-child { font-size: .85rem; color: rgba(249,232,236,.4); line-height: 1.65; }
   </style>
 </head>
 <body>
@@ -452,7 +510,7 @@
         <div class="footer-col">
           <h4>Kontakt</h4>
           <ul>
-            <li><a href="/cdn-cgi/l/email-protection#7003181f021905301f05041c1f1f1b5e131f1d"><span class="__cf_email__" data-cfemail="bac9d2d5c8d3cffad5cfced6d5d5d194d9d5d7">[email&#160;protected]</span></a></li>
+            <li><a href="#" onclick="openContact(); return false;">Nachricht schreiben</a></li>
             <li><a href="#">LinkedIn</a></li>
             <li><a href="#">Altach, Österreich</a></li>
           </ul>
@@ -494,6 +552,45 @@
     });
 
     // Waitlist form
+    function openContact() {
+      document.getElementById('contact-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeContact() {
+      document.getElementById('contact-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function submitContact() {
+      const name  = document.getElementById('c-name').value.trim();
+      const email = document.getElementById('c-email').value.trim();
+      const msg   = document.getElementById('c-msg').value.trim();
+      let valid = true;
+      ['c-name','c-email','c-msg'].forEach(id => document.getElementById(id).style.borderColor = '');
+      if (!name)  { document.getElementById('c-name').style.borderColor  = '#C5546A'; valid = false; }
+      if (!email || !email.includes('@')) { document.getElementById('c-email').style.borderColor = '#C5546A'; valid = false; }
+      if (!msg)   { document.getElementById('c-msg').style.borderColor   = '#C5546A'; valid = false; }
+      if (!valid) return;
+      const btn = document.querySelector('#contact-fields .modal-submit');
+      btn.textContent = 'Wird gesendet...'; btn.disabled = true;
+      emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
+        to_email: 'shoriu@outlook.com',
+        to_name: 'Shoriu',
+        name: name,
+        email: email,
+        message: msg,
+      })
+      .then(() => {
+        document.getElementById('contact-fields').style.display = 'none';
+        document.getElementById('contact-success').style.display = 'block';
+        setTimeout(closeContact, 3000);
+      })
+      .catch(() => {
+        document.getElementById('contact-fields').style.display = 'none';
+        document.getElementById('contact-success').style.display = 'block';
+        setTimeout(closeContact, 3000);
+      });
+    }
+
     function submitWaitlist() {
       const nameInput  = document.getElementById('waitlist-name');
       const emailInput = document.getElementById('waitlist-email');
