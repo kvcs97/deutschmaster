@@ -10,8 +10,8 @@
       --sakura:       #e8a0b0;
       --sakura-light: #f5dce3;
       --ink:          #1a1612;
-      --ink-soft:     #4a3f38;
-      --parchment:    #faf8f5;
+      --ink-soft:     #2e261f;
+      --parchment:    #f5f0ec;
       --line:         rgba(26,22,18,0.08);
     }
 
@@ -120,7 +120,7 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--ink-soft);
-      opacity: 0.5;
+      opacity: 0.7;
       margin-top: 0.5rem;
     }
 
@@ -147,7 +147,7 @@
 
     section p {
       font-size: 0.975rem;
-      color: var(--ink-soft);
+      color: #2e261f;
       line-height: 1.9;
       margin-bottom: 0.75rem;
     }
@@ -155,7 +155,7 @@
     section ul {
       padding-left: 1.2rem;
       font-size: 0.955rem;
-      color: var(--ink-soft);
+      color: #2e261f;
       line-height: 1.9;
     }
 
@@ -173,7 +173,7 @@
       width: 40px;
       height: 1px;
       background: var(--sakura);
-      opacity: 0.4;
+      opacity: 0.65;
       margin: 2.5rem 0;
     }
 
@@ -181,7 +181,7 @@
       font-size: 0.78rem;
       letter-spacing: 0.08em;
       color: var(--ink-soft);
-      opacity: 0.4;
+      opacity: 0.65;
       margin-top: 3rem;
       padding-top: 2rem;
       border-top: 1px solid var(--line);
@@ -196,17 +196,44 @@
       font-size: 0.75rem;
       letter-spacing: 0.1em;
       color: var(--ink-soft);
-      opacity: 0.4;
+      opacity: 0.65;
     }
 
     @media (max-width: 600px) {
       header { padding: 1.25rem 1.5rem; }
       main { padding: 7rem 1.5rem 4rem; }
     }
+
+    /* Petals */
+    .petal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+    .petal { position: absolute; top: -60px; background: radial-gradient(ellipse at 40% 40%, #F9E0E8 0%, #e8a0b0 80%); border-radius: 50% 0 50% 0; opacity: 0; animation: fall linear infinite; }
+    .petal:nth-child(1)  { left:5%;  width:8px;  height:11px; animation-duration:14s; animation-delay:0s;  }
+    .petal:nth-child(2)  { left:15%; width:12px; height:16px; animation-duration:18s; animation-delay:3s;  }
+    .petal:nth-child(3)  { left:25%; width:7px;  height:10px; animation-duration:12s; animation-delay:7s;  }
+    .petal:nth-child(4)  { left:38%; width:9px;  height:13px; animation-duration:16s; animation-delay:1s;  }
+    .petal:nth-child(5)  { left:50%; width:11px; height:15px; animation-duration:20s; animation-delay:5s;  }
+    .petal:nth-child(6)  { left:62%; width:8px;  height:11px; animation-duration:13s; animation-delay:9s;  }
+    .petal:nth-child(7)  { left:74%; width:10px; height:14px; animation-duration:17s; animation-delay:2s;  }
+    .petal:nth-child(8)  { left:85%; width:7px;  height:10px; animation-duration:11s; animation-delay:6s;  }
+    .petal:nth-child(9)  { left:92%; width:13px; height:17px; animation-duration:19s; animation-delay:4s;  }
+    .petal:nth-child(10) { left:44%; width:6px;  height:9px;  animation-duration:15s; animation-delay:11s; }
+    @keyframes fall {
+      0%   { transform: translateY(-60px) rotate(0deg)   translateX(0);    opacity:0; }
+      10%  { opacity:.45; }
+      50%  { transform: translateY(50vh)  rotate(180deg) translateX(40px); }
+      90%  { opacity:.3; }
+      100% { transform: translateY(300vh) rotate(360deg) translateX(-20px); opacity:0; }
+    }
   </style>
 </head>
 <body>
 
+
+<div class="petal-container" aria-hidden="true">
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div>
+</div>
 <header>
   <a href="/" class="logo">書流 <span>Shoriu</span></a>
   <a href="/" class="back-link">← Zurück</a>
@@ -228,7 +255,7 @@
     <p>
       <strong>Adam Kovacs</strong><br />
       Unter Hub 6, 6844 Altach, Österreich<br />
-      E-Mail: <a href="mailto:shoriu@outlook.com">shoriu@outlook.com</a><br />
+      E-Mail: <a href="/cdn-cgi/l/email-protection#b4c7dcdbc6ddc1f4dbc1c0d8dbdbdf9ad7dbd9"><span class="__cf_email__" data-cfemail="f182999e839884b19e84859d9e9e9adf929e9c">[email&#160;protected]</span></a><br />
       Kontaktformular: <a href="/#contact">shoriu.com/#contact</a>
     </p>
   </section>
@@ -337,7 +364,7 @@
       <li><strong>Widerruf einer Einwilligung</strong> – Art. 7 Abs. 3 DSGVO</li>
     </ul>
     <p>
-      Zur Ausübung dieser Rechte wende dich an: <a href="mailto:shoriu@outlook.com">shoriu@outlook.com</a>
+      Zur Ausübung dieser Rechte wende dich an: <a href="/cdn-cgi/l/email-protection#ec9f84839e8599ac83999880838387c28f8381"><span class="__cf_email__" data-cfemail="57243f38253e22173822233b38383c7934383a">[email&#160;protected]</span></a>
     </p>
     <p>
       Du hast zudem das Recht, dich bei der österreichischen Datenschutzbehörde zu beschweren:<br />
@@ -362,15 +389,4 @@
 </main>
 
 <footer>
-  &copy; <span id="year"></span> Shoriu · Adam Kovacs · Altach, Österreich
-</footer>
-
-<script>
-  const now = new Date();
-  document.getElementById('year').textContent = now.getFullYear();
-  document.getElementById('date').textContent =
-    now.toLocaleDateString('de-AT', { year: 'numeric', month: 'long' });
-</script>
-
-</body>
-</html>
+  &copy; <span id="year"></span> Shoriu · Adam Kovacs · Altach, Österr
