@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Individuelle Lösung – Shoriu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script data-cfasync="false">
+    const EJS_PUBLIC_KEY  = 'soDGZ8_-H1jgn2yGj';
+    const EJS_SERVICE_ID  = 'service_9g5d75b';
+    const EJS_ANFRAGE_ID  = 'template_kdstto4'; // Kontakt-Template — passt auch hier
+    window.addEventListener('load', () => {
+      if (typeof emailjs !== 'undefined') emailjs.init({ publicKey: EJS_PUBLIC_KEY });
+    });
+  </script>
+
+  <style>
+    :root {
+      --sakura:        #e8a0b0;
+      --sakura-light:  #f5dce3;
+      --sakura-mid:    #C5546A;
+      --ink:           #1a1612;
+      --ink-soft:      #2e261f;
+      --parchment:     #f5f0ec;
+      --line:          rgba(26,22,18,0.08);
+      --rose:          #D4829A;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      background: var(--parchment);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    /* Kanji watermark */
+    body::before {
+      content: '創造';
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(120px, 22vw, 280px);
+      font-weight: 200;
+      color: rgba(232,160,176,0.06);
+      pointer-events: none; z-index: 0; user-select: none; white-space: nowrap;
+    }
+
+    /* Petals */
+    .petal-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+    .petal { position: absolute; top: -60px; background: radial-gradient(ellipse at 40% 40%, #F9E0E8 0%, #e8a0b0 80%); border-radius: 50% 0 50% 0; opacity: 0; animation: fall linear infinite; }
+    .petal:nth-child(1)  { left:5%;  width:8px;  height:11px; animation-duration:14s; animation-delay:0s;  }
+    .petal:nth-child(2)  { left:15%; width:12px; height:16px; animation-duration:18s; animation-delay:3s;  }
+    .petal:nth-child(3)  { left:25%; width:7px;  height:10px; animation-duration:12s; animation-delay:7s;  }
+    .petal:nth-child(4)  { left:38%; width:9px;  height:13px; animation-duration:16s; animation-delay:1s;  }
+    .petal:nth-child(5)  { left:50%; width:11px; height:15px; animation-duration:20s; animation-delay:5s;  }
+    .petal:nth-child(6)  { left:62%; width:8px;  height:11px; animation-duration:13s; animation-delay:9s;  }
+    .petal:nth-child(7)  { left:74%; width:10px; height:14px; animation-duration:17s; animation-delay:2s;  }
+    .petal:nth-child(8)  { left:85%; width:7px;  height:10px; animation-duration:11s; animation-delay:6s;  }
+    .petal:nth-child(9)  { left:92%; width:13px; height:17px; animation-duration:19s; animation-delay:4s;  }
+    .petal:nth-child(10) { left:44%; width:6px;  height:9px;  animation-duration:15s; animation-delay:11s; }
+    @keyframes fall {
+      0%   { transform: translateY(-60px) rotate(0deg)   translateX(0);    opacity:0; }
+      10%  { opacity:.45; }
+      50%  { transform: translateY(50vh)  rotate(180deg) translateX(40px); }
+      90%  { opacity:.3; }
+      100% { transform: translateY(300vh) rotate(360deg) translateX(-20px); opacity:0; }
+    }
+
+    /* Header */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(245,240,236,0.85);
+      backdrop-filter: blur(12px);
+    }
+    .logo { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 1.25rem; letter-spacing: .06em; color: var(--ink); text-decoration: none; }
+    .logo span { font-family: 'Noto Serif JP', serif; font-weight: 200; color: var(--rose); margin-right: 6px; }
+    .back-link { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); text-decoration: none; opacity: .6; transition: opacity .2s; }
+    .back-link:hover { opacity: 1; }
+
+    /* Main */
+    main {
+      position: relative; z-index: 1;
+      max-width: 720px; margin: 0 auto;
+      padding: 9rem 2rem 6rem;
+      animation: fadeUp .7s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(18px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* Page title */
+    .page-title {
+      margin-bottom: 3rem; padding-bottom: 2rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .page-title .kanji {
+      font-family: 'Noto Serif JP', serif; font-weight: 200;
+      font-size: .85rem; letter-spacing: .2em;
+      color: var(--rose); display: block; margin-bottom: .5rem;
+    }
+    .page-title h1 {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: clamp(2rem, 5vw, 3rem); line-height: 1.1; color: var(--ink);
+    }
+    .page-title h1 em { font-style: italic; color: var(--sakura-mid); }
+    .page-title .sub {
+      margin-top: .8rem; font-size: .9rem;
+      color: var(--ink-soft); line-height: 1.7; max-width: 560px;
+    }
+
+    /* Info boxes */
+    .info-strip {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem; margin-bottom: 3rem;
+    }
+    .info-box {
+      background: white; border: 1px solid var(--sakura-light);
+      border-radius: 12px; padding: 1.2rem 1.4rem;
+    }
+    .info-box .ib-num {
+      font-family: 'Noto Serif JP', serif; font-size: 1rem;
+      color: var(--sakura); margin-bottom: .4rem;
+    }
+    .info-box p { font-size: .82rem; color: var(--ink-soft); line-height: 1.55; }
+
+    /* Form */
+    .form-card {
+      background: white; border: 1px solid var(--sakura-light);
+      border-radius: 18px; padding: 2.8rem 2.4rem;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .form-field { display: flex; flex-direction: column; gap: .35rem; margin-bottom: 1.2rem; }
+    .form-label {
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--rose);
+    }
+    .form-input {
+      background: var(--parchment); border: 1px solid rgba(232,160,176,.3);
+      border-radius: 8px; padding: 12px 16px;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      color: var(--ink); outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    .form-input::placeholder { color: rgba(26,22,18,.25); }
+    .form-input:focus { border-color: var(--sakura); background: white; }
+    .form-textarea { resize: vertical; min-height: 110px; }
+    .form-select {
+      background: var(--parchment); border: 1px solid rgba(232,160,176,.3);
+      border-radius: 8px; padding: 12px 16px;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      color: var(--ink); outline: none; cursor: pointer;
+      transition: border-color .2s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23D4829A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      padding-right: 36px;
+    }
+    .form-select:focus { border-color: var(--sakura); }
+
+    .form-divider {
+      width: 40px; height: 1px; background: var(--sakura-light);
+      margin: 1.8rem 0;
+    }
+
+    .form-section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; font-weight: 400; color: var(--ink);
+      margin-bottom: 1.2rem;
+    }
+    .form-section-title em { font-style: italic; color: var(--sakura-mid); }
+
+    .char-hint { font-size: .72rem; color: rgba(26,22,18,.35); margin-top: .25rem; }
+
+    .submit-btn {
+      width: 100%; margin-top: .8rem;
+      background: #2C1A22; color: white; border: none; cursor: pointer;
+      padding: 15px; border-radius: 10px;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      letter-spacing: .08em; text-transform: uppercase;
+      transition: background .2s, transform .15s;
+    }
+    .submit-btn:hover { background: var(--sakura-mid); transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    /* Success */
+    .success-box {
+      display: none; text-align: center; padding: 3rem 2rem;
+    }
+    .success-kanji {
+      font-family: 'Noto Serif JP', serif; font-size: 3rem;
+      color: var(--sakura); font-weight: 200; margin-bottom: 1.2rem;
+    }
+    .success-box h2 {
+      font-family: 'Cormorant Garamond', serif; font-size: 2rem;
+      font-weight: 300; font-style: italic; color: var(--ink); margin-bottom: .6rem;
+    }
+    .success-box p { font-size: .9rem; color: var(--ink-soft); line-height: 1.7; }
+
+    /* Footer */
+    footer {
+      position: relative; z-index: 1; text-align: center;
+      padding: 2rem; border-top: 1px solid var(--line);
+      font-size: .75rem; letter-spacing: .1em;
+      color: var(--ink-soft); opacity: .5;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 1.25rem 1.5rem; }
+      main { padding: 7rem 1.2rem 4rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-card { padding: 2rem 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="petal-container" aria-hidden="true">
+    <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+    <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+    <div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div>
+  </div>
+
+  <header>
+    <a href="/" class="logo"><span>書流</span> Shoriu</a>
+    <a href="/" class="back-link">← Zurück</a>
+  </header>
+
+  <main>
+    <div class="page-title">
+      <span class="kanji">個別開発 — Individuelle Lösung</span>
+      <h1>Dein Prozess.<br />Unsere <em>Lösung</em>.</h1>
+      <p class="sub">
+        Shoriu baut nicht nur HandOver — wir entwickeln fokussierte Software 
+        für jeden Prozess, der zu komplex für Excel und zu speziell für ein 
+        Standard-ERP ist. Beschreib uns deine Situation, wir melden uns persönlich.
+      </p>
+    </div>
+
+    <div class="info-strip">
+      <div class="info-box">
+        <div class="ib-num">一</div>
+        <p>Beschreib deinen Prozess — wir hören zu, ohne Vorannahmen.</p>
+      </div>
+      <div class="info-box">
+        <div class="ib-num">二</div>
+        <p>Wir analysieren und skizzieren eine fokussierte Lösung.</p>
+      </div>
+      <div class="info-box">
+        <div class="ib-num">三</div>
+        <p>Erstes Gespräch innerhalb von 48 Stunden — kostenlos.</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div id="anfrage-form">
+
+        <!-- Kontaktdaten -->
+        <p class="form-section-title">Deine <em>Kontaktdaten</em></p>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label" for="a-name">Name *</label>
+            <input class="form-input" id="a-name" type="text" placeholder="Max Muster" />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="a-email">E-Mail *</label>
+            <input class="form-input" id="a-email" type="email" placeholder="max@firma.ch" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label" for="a-branche">Branche *</label>
+            <select class="form-input form-select" id="a-branche">
+              <option value="" disabled selected>Bitte wählen</option>
+              <option>Logistik / Lager</option>
+              <option>Produktion / Fertigung</option>
+              <option>Handel / Retail</option>
+              <option>Gesundheit / Pflege</option>
+              <option>Bau / Handwerk</option>
+              <option>Dienstleistung</option>
+              <option>Andere</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="a-groesse">Unternehmensgrösse *</label>
+            <select class="form-input form-select" id="a-groesse">
+              <option value="" disabled selected>Bitte wählen</option>
+              <option>1–10 Mitarbeiter</option>
+              <option>11–50 Mitarbeiter</option>
+              <option>51–200 Mitarbeiter</option>
+              <option>200+ Mitarbeiter</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Prozess -->
+        <p class="form-section-title">Der <em>aktuelle Prozess</em></p>
+        <div class="form-field">
+          <label class="form-label" for="a-prozess">Wie läuft es heute ab? *</label>
+          <textarea class="form-input form-textarea" id="a-prozess" placeholder="z.B. Wir erfassen Lieferungen aktuell auf Papier, dann tippt jemand alles in Excel ein. Fehler passieren oft, die Suche dauert lang..."></textarea>
+          <span class="char-hint">So detailliert wie möglich — hilft uns, die richtige Lösung zu skizzieren.</span>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Wunschlösung -->
+        <p class="form-section-title">Die <em>gewünschte Lösung</em></p>
+        <div class="form-field">
+          <label class="form-label" for="a-loesung">Was soll die App lösen? *</label>
+          <textarea class="form-input form-textarea" id="a-loesung" placeholder="z.B. Automatische Erfassung per Barcode, digitale Unterschrift, direktes Archiv als PDF — alles in unter einer Minute..."></textarea>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Budget -->
+        <p class="form-section-title">Rahmen <em>(optional)</em></p>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label" for="a-budget">Budget (CHF/Jahr)</label>
+            <select class="form-input form-select" id="a-budget">
+              <option value="" selected>Noch offen</option>
+              <option>unter 2'000</option>
+              <option>2'000 – 5'000</option>
+              <option>5'000 – 15'000</option>
+              <option>über 15'000</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="a-zeitrahmen">Zeitrahmen</label>
+            <select class="form-input form-select" id="a-zeitrahmen">
+              <option value="" selected>Noch offen</option>
+              <option>So schnell wie möglich</option>
+              <option>Innerhalb 3 Monate</option>
+              <option>Innerhalb 6 Monate</option>
+              <option>Kein Zeitdruck</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="submit-btn" id="anfrage-submit">Anfrage absenden</button>
+      </div>
+
+      <!-- Success -->
+      <div class="success-box" id="anfrage-success">
+        <div class="success-kanji">書流</div>
+        <h2>Anfrage erhalten.</h2>
+        <p>Vielen Dank — wir haben deine Beschreibung erhalten<br />
+        und melden uns innerhalb von 48 Stunden persönlich.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; <span id="year"></span> Shoriu · Adam Kovacs · Altach, Österreich
+  </footer>
+
+  <script data-cfasync="false">
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    document.getElementById('anfrage-submit').addEventListener('click', function() {
+      const name      = document.getElementById('a-name').value.trim();
+      const email     = document.getElementById('a-email').value.trim();
+      const branche   = document.getElementById('a-branche').value;
+      const groesse   = document.getElementById('a-groesse').value;
+      const prozess   = document.getElementById('a-prozess').value.trim();
+      const loesung   = document.getElementById('a-loesung').value.trim();
+      const budget    = document.getElementById('a-budget').value || 'Noch offen';
+      const zeitrahmen = document.getElementById('a-zeitrahmen').value || 'Noch offen';
+
+      let valid = true;
+      ['a-name','a-email','a-branche','a-groesse','a-prozess','a-loesung'].forEach(function(id) {
+        document.getElementById(id).style.borderColor = '';
+      });
+
+      if (!name)    { document.getElementById('a-name').style.borderColor    = '#C5546A'; valid = false; }
+      if (!email || !email.includes('@')) { document.getElementById('a-email').style.borderColor = '#C5546A'; valid = false; }
+      if (!branche) { document.getElementById('a-branche').style.borderColor = '#C5546A'; valid = false; }
+      if (!groesse) { document.getElementById('a-groesse').style.borderColor = '#C5546A'; valid = false; }
+      if (!prozess) { document.getElementById('a-prozess').style.borderColor = '#C5546A'; valid = false; }
+      if (!loesung) { document.getElementById('a-loesung').style.borderColor = '#C5546A'; valid = false; }
+      if (!valid) return;
+
+      var btn = document.getElementById('anfrage-submit');
+      btn.textContent = 'Wird gesendet...';
+      btn.disabled = true;
+
+      var message =
+        'BRANCHE: ' + branche + '\n' +
+        'GRÖSSE: ' + groesse + '\n\n' +
+        'AKTUELLER PROZESS:\n' + prozess + '\n\n' +
+        'GEWÜNSCHTE LÖSUNG:\n' + loesung + '\n\n' +
+        'BUDGET: ' + budget + '\n' +
+        'ZEITRAHMEN: ' + zeitrahmen;
+
+      emailjs.send(EJS_SERVICE_ID, EJS_ANFRAGE_ID, {
+        name:    name,
+        email:   email,
+        message: message,
+      })
+      .then(function() {
+        document.getElementById('anfrage-form').style.display = 'none';
+        document.getElementById('anfrage-success').style.display = 'block';
+      })
+      .catch(function(err) {
+        console.error('EmailJS error:', err);
+        btn.textContent = 'Fehler — bitte nochmals versuchen';
+        btn.disabled = false;
+      });
+    });
+  </script>
+
+</body>
+</html>
