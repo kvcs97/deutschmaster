@@ -626,4 +626,100 @@
         document.getElementById('waitlist-form').style.display = 'none';
         document.getElementById('waitlist-success').style.display = 'block';
       })
-      .catch((err) =>
+      .catch((err) => {
+        console.error('EmailJS error:', err);
+        document.getElementById('waitlist-form').style.display = 'none';
+        document.getElementById('waitlist-success').style.display = 'block';
+      });
+    }
+  </script>
+
+  <!-- Contact Modal -->
+  <div class="modal-overlay" id="contact-modal">
+    <div class="modal-box">
+      <button class="modal-close" id="modal-close-btn">&#x2715;</button>
+      <h3>Schreib uns <em>kurz</em>.</h3>
+      <p class="modal-sub">Wir antworten innerhalb von 24 Stunden.</p>
+      <div id="contact-fields" class="modal-fields">
+        <div class="modal-field">
+          <label class="modal-label" for="c-name">Name *</label>
+          <input class="modal-input" id="c-name" type="text" placeholder="Max Muster" />
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="c-email">E-Mail *</label>
+          <input class="modal-input" id="c-email" type="email" placeholder="max@firma.ch" />
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="c-msg">Nachricht *</label>
+          <textarea class="modal-input modal-textarea" id="c-msg" placeholder="Wie können wir helfen?"></textarea>
+        </div>
+        <button class="modal-submit" id="contact-submit-btn">Nachricht senden</button>
+      </div>
+      <div class="modal-success" id="contact-success">
+        <p>Danke für deine Nachricht.</p>
+        <p>Wir melden uns bald bei dir —<br/>書流 Shoriu</p>
+      </div>
+    </div>
+  </div>
+
+  <script data-cfasync="false">
+    // Wire up all buttons via JS — no inline onclick
+    document.getElementById('contact-trigger').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('contact-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+
+    document.getElementById('modal-close-btn').addEventListener('click', function() {
+      document.getElementById('contact-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    });
+
+    document.getElementById('contact-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+
+    document.getElementById('contact-submit-btn').addEventListener('click', function() {
+      const name  = document.getElementById('c-name').value.trim();
+      const email = document.getElementById('c-email').value.trim();
+      const msg   = document.getElementById('c-msg').value.trim();
+      let valid = true;
+
+      ['c-name','c-email','c-msg'].forEach(function(id) {
+        document.getElementById(id).style.borderColor = '';
+      });
+      if (!name)  { document.getElementById('c-name').style.borderColor  = '#C5546A'; valid = false; }
+      if (!email || !email.includes('@')) { document.getElementById('c-email').style.borderColor = '#C5546A'; valid = false; }
+      if (!msg)   { document.getElementById('c-msg').style.borderColor   = '#C5546A'; valid = false; }
+      if (!valid) return;
+
+      var btn = document.getElementById('contact-submit-btn');
+      btn.textContent = 'Wird gesendet...';
+      btn.disabled = true;
+
+      emailjs.send(EJS_SERVICE_ID, EJS_CONTACT_ID, {
+        name:    name,
+        email:   email,
+        message: msg,
+      })
+      .then(function() {
+        document.getElementById('contact-fields').style.display = 'none';
+        document.getElementById('contact-success').style.display = 'block';
+        setTimeout(function() {
+          document.getElementById('contact-modal').classList.remove('open');
+          document.body.style.overflow = '';
+        }, 3000);
+      })
+      .catch(function(err) {
+        console.error('EmailJS error:', err);
+        btn.textContent = 'Fehler — bitte nochmals versuchen';
+        btn.disabled = false;
+      });
+    });
+  </script>
+
+</body>
+</html>
