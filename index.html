@@ -511,7 +511,7 @@
         <div class="footer-col">
           <h4>Kontakt</h4>
           <ul>
-            <li><a href="#" onclick="openContact(); return false;">Nachricht schreiben</a></li>
+            <li><a href="#" id="contact-trigger">Nachricht schreiben</a></li>
             <li><a href="#">LinkedIn</a></li>
             <li><a href="#">Altach, Österreich</a></li>
           </ul>
@@ -553,6 +553,12 @@
     });
 
     // Waitlist form
+    // Attach contact trigger after DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      const trigger = document.getElementById('contact-trigger');
+      if (trigger) trigger.addEventListener('click', (e) => { e.preventDefault(); openContact(); });
+    });
+
     function openContact() {
       document.getElementById('contact-modal').classList.add('open');
       document.body.style.overflow = 'hidden';
